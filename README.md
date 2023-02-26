@@ -1,6 +1,5 @@
-# Optical-Flow-Anticheat
-
-This repository contains code for detecting suspicious behavior in Counter-Strike:Global Offensive game clips. The detection is based on optical flow and a pre-trained ResNet18 model.
+# Optical Flow Anticheat
+This repository contains proof-of-concept code for detecting suspicious behavior in Counter-Strike:Global Offensive. The detection is based on a pre-trained ResNet18 model and optical flow. 
 Requirements
 - Python 3
 - PyTorch
