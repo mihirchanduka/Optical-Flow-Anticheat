@@ -1,24 +1,31 @@
 # Optical-Flow-Anticheat
 
-This repository contains code for detecting suspicious behavior in first-person shooter game clips. The detection is based on optical flow and a pre-trained ResNet18 model.
+This repository contains code for detecting suspicious behavior in Counter-Strike:Global Offensive game clips. The detection is based on optical flow and a pre-trained ResNet18 model.
 Requirements
 - Python 3
 - PyTorch
 - OpenCV
 - NumPy
 
-## Usage
+## Required Software Packages:
+- Python (3.9 +) 
+- OpenCV:
+Installed with: `pip install opencv-python`
+- PyTorch:
+Installed with: `pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113`
+Or if you don't have access to an Nvidia GPU: `pip3 install torch torchvision torchaudio`
 
+## Usage
 To analyze a set of game clips, run the following command:
 
 ```python analyze.py <clips_path> <frames_path>```
 
-where <clips_path> is the path to a file containing a list of clips (in the form of numpy arrays) to be analyzed, and <frames_path> is the path to a directory containing the frames for each clip.
+where `<clips_path>` is the path to a file containing a list of clips (in the form of numpy arrays) to be analyzed, and `<frames_path>` is the path to a directory containing the frames for each clip.
+
 File Description
-```
-    analyze.py: This is the main script for analyzing game clips and detecting suspicious behavior.
-    models/model.pt: This is a pre-trained ResNet18 model that is used for feature extraction.
-```
+-  `analyze.py`: This is the main script for analyzing game clips and detecting suspicious behavior.
+- `models/model.pt`: This is a pre-trained ResNet18 model that is used for feature extraction.
+
 
 ## Acknowledgements
 
