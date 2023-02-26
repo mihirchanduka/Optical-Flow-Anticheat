@@ -37,6 +37,7 @@ class RNN(nn.Module):
 
         return torch.sigmoid(out) # returning one forward step of the NN
 
+''' #Old
 # Function to calculate optical flow between two frames
 def calc_optical_flow(prev_frame, cur_frame):
     # Convert frames to grayscale
@@ -46,12 +47,49 @@ def calc_optical_flow(prev_frame, cur_frame):
     # Calculate optical flow using Farneback algorithm
     flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
 
-    # Updated Values
+    # Updated Values (Probably Less Accurate)
     #flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 5, 20, 10, 5, 1.5, 0)
     # Calculate magnitude of optical flow vectors
     mag = np.sqrt(flow[..., 0]**2 + flow[..., 1]**2)
 
     return mag
+'''
+
+#Visually dipslays optical flow vevctors 
+def calc_optical_flow(prev_frame, cur_frame):
+    # Convert frames to grayscale
+    prev_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
+    cur_gray = cv2.cvtColor(cur_frame, cv2.COLOR_BGR2GRAY)
+
+    # Calculate optical flow using Farneback algorithm
+    flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+
+    # Alternative Values (Probably Less Accurate)
+    #flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 5, 20, 10, 5, 1.5, 0)
+    #flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.3, 5, 25, 5, 5, 1.2, 0)
+    
+    # Calculate magnitude and angle of optical flow vectors
+    mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+
+    # Normalize magnitude to be between 0 and 255
+    mag = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
+
+    # Convert angle to hue and magnitude to value in HSV color space
+    hsv = np.zeros((prev_frame.shape[0], prev_frame.shape[1], 3), dtype=np.uint8)
+    hsv[..., 0] = ang * 180 / np.pi / 2
+    hsv[..., 1] = 255
+    hsv[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
+
+    # Convert HSV image to BGR for display
+    bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+
+    # Display optical flow magnitude image
+    cv2.imshow('Optical Flow Magnitude', bgr)
+    cv2.waitKey(1)
+
+    return mag
+
+
 
 if(len(sys.argv) != 3):
     print("Usage: python analyze.py <clips_path> <frames_path>")
