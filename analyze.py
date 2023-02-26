@@ -73,7 +73,7 @@ if(not os.path.exists(frames_path)):
 device = torch.device('cpu')
 
 #Load Custom Trained model pretrained on ImageNet and remove the last fully connected layer
-model = torch.load('./models/model.pt')
+model = torch.load('./models/model_max_data.pt')
 model.eval()
 model.fc = nn.Identity()    
 model.to(device)
