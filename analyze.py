@@ -44,10 +44,10 @@ def calc_optical_flow(prev_frame, cur_frame):
     cur_gray = cv2.cvtColor(cur_frame, cv2.COLOR_BGR2GRAY)
 
     # Calculate optical flow using Farneback algorithm
-    #flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+    flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
 
     # Updated Values
-    flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 5, 20, 10, 5, 1.5, 0)
+    #flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 5, 20, 10, 5, 1.5, 0)
     # Calculate magnitude of optical flow vectors
     mag = np.sqrt(flow[..., 0]**2 + flow[..., 1]**2)
 
@@ -128,17 +128,17 @@ for clip_idx, clip in enumerate(all_clips):
             # Convert output to a probability value between 0 and 1
             prob = torch.sigmoid(output)[0][0].item() 
 
-            if certainty < 0.55:
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}Optical Flow thinks the player is cheating on this frame with {1 - certainty:.2f} certainty{Style.RESET_ALL}")
+            if certainty > 0.55:
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}Optical Flow thinks the player is cheating on this frame with {certainty:.2f} certainty{Style.RESET_ALL}")
                 opflo_cheater +=1   
             else: 
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}Optical flow thinks player is not cheating on this frame with with {1 - certainty:.2f} certainty{Style.RESET_ALL}")
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}Optical flow thinks player is not cheating on this frame with with {1 -certainty:.2f} certainty{Style.RESET_ALL}")
                 opflo_legit +=1 
-            if prob > 0.57:
+            if prob > 0.60:
                 print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}RNN thinks the player is cheating on this frame with with {prob:.2f} certainty{Style.RESET_ALL}")
                 rnn_cheater +=1 
             else: 
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}RNN thinks player is not cheating on this frame with with {prob:.2f} certainty{Style.RESET_ALL}")
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}RNN thinks player is not cheating on this frame with with {1 - prob:.2f} certainty{Style.RESET_ALL}")
                 rnn_legit +=1  
 opflo_avg = opflo_cheater/(opflo_cheater+opflo_legit) * 100
 rnn_avg = rnn_cheater/(rnn_cheater+rnn_legit) * 100
