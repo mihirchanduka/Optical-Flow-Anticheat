@@ -53,3 +53,5 @@ for i in range(num_dirs):
 # analyze frames with optical flow
 print('\nNow analyzing frames')
 subprocess.run(['python', 'analyze.py', dir + "/clips.pt", dir])
+
+
