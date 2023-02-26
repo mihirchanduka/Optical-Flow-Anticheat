@@ -2,13 +2,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
-import torchvision.transforms as transforms
-import matplotlib.pyplot as plt
 import numpy as np
 import os
 import cv2
 import sys
 import re
+import colorama
+from colorama import Fore, Style
 
 class RNN(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, num_classes):
@@ -73,7 +73,7 @@ if(not os.path.exists(frames_path)):
 device = torch.device('cpu')
 
 #Load Custom Trained model pretrained on ImageNet and remove the last fully connected layer
-model = torch.load('./models/model_max_data.pt')
+model = torch.load('./models/model_trained.pt')
 model.eval()
 model.fc = nn.Identity()    
 model.to(device)
@@ -100,6 +100,7 @@ for clip_idx, clip in enumerate(all_clips):
 
     # Calculate optical flow between consecutive frames and analyze the data
     for i in range(1, len(frames)):
+        frame_count = i
         # Calculate optical flow between previous frame and current frame
         prev_frame = frames[i-1][roi[1]:roi[3], roi[0]:roi[2], :]
         cur_frame = frames[i][roi[1]:roi[3], roi[0]:roi[2], :]
@@ -108,33 +109,31 @@ for clip_idx, clip in enumerate(all_clips):
         # Store magnitude of optical flow vectors for current frame
         magnitudes.append(mag)
 
- # Check if there are any abnormal movements in the player's crosshair
-        certainty = 0 
-        prob = 0
+        # Check if there are any abnormal movements in the player's crosshair
         if np.max(mag) > threshold:
+            print(np.max(mag))
             # Calculate certainty value based on magnitude of optical flow vectors
             certainty = np.mean(mag) / np.max(mag)
 
+            # Process Clip Through RNN as verification
             with torch.no_grad():
-
                 for i in range(len(all_clips)):
                     curr_test = all_clips[i].unsqueeze(0)
                     output = model(curr_test)
-
+                    
             # Convert output to a probability value between 0 and 1
-            prob = torch.sigmoid(output)[0][0].item() * 100
+            prob = torch.sigmoid(output)[0][0].item() 
 
+            if certainty > 0.55:
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}Optical Flow says the player is cheating with {certainty:.2f} certainty{Style.RESET_ALL}")
+                break
+            else: 
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}Optical flow says player is not cheating with {certainty:.2f} certainty{Style.RESET_ALL}")
 
-
-    if certainty > 0.55:
-        print(f"Optical Flow says the player is cheating with {certainty:.2f}% certainty")
-        break
-    else: 
-        print(f"Optical flow says: player is not cheating with {certainty:.2f}% certainty")
-
-    if prob > 55:
-        print(f"RNN says the player is cheating with {prob:.2f}% probabilty")
-    else: 
-        print(f"RNN says: player is not cheating with {prob:.2f}% probabilty")
-
+            if prob > 55:
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}RNN says the player is cheating with {prob:.2f} certainty{Style.RESET_ALL}")
+            else: 
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}RNN says player is not cheating with {prob:.2f} certainty{Style.RESET_ALL}")
+        else:
+            print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}No Abnormal Crosshair Movements, Player is Not Cheating{Style.RESET_ALL}")    
 

@@ -5,6 +5,7 @@ Requirements
 - PyTorch
 - OpenCV
 - NumPy
+- Colorama
 
 ## Required Software Packages:
 - Python (3.9 +) 
@@ -13,6 +14,8 @@ Installed with: `pip install opencv-python`
 - PyTorch:
 Installed with: `pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113`
 Or if you don't have access to an Nvidia GPU: `pip3 install torch torchvision torchaudio`
+- Colorama
+Insatlled with `pip install colorama`
 
 ## Usage
 To analyze a set of game clips, run the following command:
