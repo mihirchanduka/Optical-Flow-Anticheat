@@ -44,8 +44,10 @@ def calc_optical_flow(prev_frame, cur_frame):
     cur_gray = cv2.cvtColor(cur_frame, cv2.COLOR_BGR2GRAY)
 
     # Calculate optical flow using Farneback algorithm
-    flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+    #flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
 
+    # Updated Values
+    flow = cv2.calcOpticalFlowFarneback(prev_gray, cur_gray, None, 0.5, 5, 20, 10, 5, 1.5, 0)
     # Calculate magnitude of optical flow vectors
     mag = np.sqrt(flow[..., 0]**2 + flow[..., 1]**2)
 
@@ -97,7 +99,10 @@ for clip_idx, clip in enumerate(all_clips):
 
     # Initialize list to store magnitudes of optical flow vectors for each frame
     magnitudes = []
-
+    opflo_cheater = 0 
+    opflo_legit = 0 
+    rnn_cheater = 0 
+    rnn_legit = 0
     # Calculate optical flow between consecutive frames and analyze the data
     for i in range(1, len(frames)):
         frame_count = i
@@ -111,7 +116,6 @@ for clip_idx, clip in enumerate(all_clips):
 
         # Check if there are any abnormal movements in the player's crosshair
         if np.max(mag) > threshold:
-            print(np.max(mag))
             # Calculate certainty value based on magnitude of optical flow vectors
             certainty = np.mean(mag) / np.max(mag)
 
@@ -124,16 +128,19 @@ for clip_idx, clip in enumerate(all_clips):
             # Convert output to a probability value between 0 and 1
             prob = torch.sigmoid(output)[0][0].item() 
 
-            if certainty > 0.55:
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}Optical Flow says the player is cheating with {certainty:.2f} certainty{Style.RESET_ALL}")
-                break
+            if certainty < 0.55:
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}Optical Flow thinks the player is cheating on this frame with {1 - certainty:.2f} certainty{Style.RESET_ALL}")
+                opflo_cheater +=1   
             else: 
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}Optical flow says player is not cheating with {certainty:.2f} certainty{Style.RESET_ALL}")
-
-            if prob > 55:
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}RNN says the player is cheating with {prob:.2f} certainty{Style.RESET_ALL}")
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}Optical flow thinks player is not cheating on this frame with with {1 - certainty:.2f} certainty{Style.RESET_ALL}")
+                opflo_legit +=1 
+            if prob > 0.57:
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}RNN thinks the player is cheating on this frame with with {prob:.2f} certainty{Style.RESET_ALL}")
+                rnn_cheater +=1 
             else: 
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}RNN says player is not cheating with {prob:.2f} certainty{Style.RESET_ALL}")
-        else:
-            print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}No Abnormal Crosshair Movements, Player is Not Cheating{Style.RESET_ALL}")    
-
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}RNN thinks player is not cheating on this frame with with {prob:.2f} certainty{Style.RESET_ALL}")
+                rnn_legit +=1  
+opflo_avg = opflo_cheater/(opflo_cheater+opflo_legit) * 100
+rnn_avg = rnn_cheater/(rnn_cheater+rnn_legit) * 100
+print("Optical flow is " + str(opflo_avg) + "% sure the player is cheating")
+print("RNN is " + str(rnn_avg) + "% sure the player is cheating")
