@@ -139,8 +139,6 @@ for clip_idx, clip in enumerate(all_clips):
     magnitudes = []
     opflo_cheater = 0 
     opflo_legit = 0 
-    rnn_cheater = 0 
-    rnn_legit = 0
     # Calculate optical flow between consecutive frames and analyze the data
     for i in range(1, len(frames)):
         frame_count = i
@@ -162,23 +160,33 @@ for clip_idx, clip in enumerate(all_clips):
                 for i in range(len(all_clips)):
                     curr_test = all_clips[i].unsqueeze(0)
                     output = model(curr_test)
-                    
+
             # Convert output to a probability value between 0 and 1
             prob = torch.sigmoid(output)[0][0].item() 
 
-            if certainty > 0.55:
+            if certainty < 0.25:
                 print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}Optical Flow thinks the player is cheating on this frame with {certainty:.2f} certainty{Style.RESET_ALL}")
                 opflo_cheater +=1   
             else: 
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}Optical flow thinks player is not cheating on this frame with with {1 -certainty:.2f} certainty{Style.RESET_ALL}")
+                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}Optical flow thinks player is not cheating on this frame with with {certainty:.2f} certainty{Style.RESET_ALL}")
                 opflo_legit +=1 
-            if prob > 0.60:
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}RNN thinks the player is cheating on this frame with with {prob:.2f} certainty{Style.RESET_ALL}")
-                rnn_cheater +=1 
-            else: 
-                print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}RNN thinks player is not cheating on this frame with with {1 - prob:.2f} certainty{Style.RESET_ALL}")
-                rnn_legit +=1  
+            
 opflo_avg = opflo_cheater/(opflo_cheater+opflo_legit) * 100
-rnn_avg = rnn_cheater/(rnn_cheater+rnn_legit) * 100
 print("Optical flow is " + str(opflo_avg) + "% sure the player is cheating")
-print("RNN is " + str(rnn_avg) + "% sure the player is cheating")
+print("RNN is " + str (prob*100) + "% sure the player is cheating")
+
+
+#Verdicts
+if opflo_avg > 50:
+    print("Optical Flow Predicts the Player is Cheating")
+else:
+    print("Optical Flow Predicts the Player is Not Cheating")
+    
+if prob > 0.50:
+   print("RNN Predicts the Player is Cheating")
+else: 
+    print("RNN Predicts the Player is Not Cheating")
+
+
+
+

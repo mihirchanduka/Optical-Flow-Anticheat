@@ -1,5 +1,5 @@
 # Optical Flow Anticheat
-This repository contains proof-of-concept code for detecting suspicious behavior in Counter-Strike:Global Offensive. The detection is based on a pre-trained ResNet18 model and optical flow. 
+This repository contains proof-of-concept code for detecting suspicious behavior in Counter-Strike:Global Offensive as part of an AP research project. The detection is based on a pre-trained ResNet18 model and optical flow.
 Requirements
 - Python 3
 - PyTorch
@@ -18,6 +18,11 @@ Or if you don't have access to an Nvidia GPU: `pip3 install torch torchvision to
 Insatlled with `pip install colorama`
 
 ## Usage
+To run full prediction, run the following command:
+```python prediction.py <video_file.mp4>```
+
+where `<video_file.mp4>` is the path to the vidoe
+
 To analyze a set of game clips, run the following command:
 
 ```python analyze.py <clips_path> <frames_path>```
@@ -28,6 +33,10 @@ File Description
 -  `analyze.py`: This is the main script for analyzing game clips and detecting suspicious behavior.
 - `models/model.pt`: This is a pre-trained ResNet18 model that is used for feature extraction.
 
+
+## TO-DO
+- Tweak certainity values
+- Fix RNN predictions
 
 ## Acknowledgements
 
