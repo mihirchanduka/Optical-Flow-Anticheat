@@ -164,7 +164,7 @@ for clip_idx, clip in enumerate(all_clips):
             # Convert output to a probability value between 0 and 1
             prob = torch.sigmoid(output)[0][0].item() 
 
-            if certainty < 0.25:
+            if certainty < 0.15:
                 print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}Optical Flow thinks the player is cheating on this frame with {certainty:.2f} certainty{Style.RESET_ALL}")
                 opflo_cheater +=1   
             else: 
