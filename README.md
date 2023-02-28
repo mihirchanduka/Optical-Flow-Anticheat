@@ -36,7 +36,7 @@ File Description
 
 ## TO-DO
 - ~~Tweak certainity values~~
-- Fix RNN predictions (Not necessary as it is only used for external validation of optical flow's verdict)
+- ~~Fix RNN predictions (Not necessary as it is only used for external validation of optical flow's verdict)~~ (Scraped)
 
 ## Acknowledgements
 
