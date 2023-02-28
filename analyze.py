@@ -166,13 +166,15 @@ for clip_idx, clip in enumerate(all_clips):
 
             if certainty < 0.15:
                 print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.RED}Optical Flow thinks the player is cheating on this frame with {certainty:.2f} certainty{Style.RESET_ALL}")
-                opflo_cheater +=1   
+                opflo_cheater +=1  
             else: 
                 print(f"Clip: {clip_idx} Frame: {frame_count}| {Fore.GREEN}Optical flow thinks player is not cheating on this frame with with {certainty:.2f} certainty{Style.RESET_ALL}")
                 opflo_legit +=1 
             
 opflo_avg = opflo_cheater/(opflo_cheater+opflo_legit) * 100
 print("Optical flow is " + str(opflo_avg) + "% sure the player is cheating")
+print(str(opflo_cheater) + " Instances of cheating")
+print(str(opflo_legit) + " Instances of noncheating")
 print("RNN is " + str (prob*100) + "% sure the player is cheating")
 
 
