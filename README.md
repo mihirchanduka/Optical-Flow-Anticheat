@@ -21,7 +21,7 @@ Insatlled with `pip install colorama`
 To run full prediction, run the following command:
 ```python prediction.py <video_file.mp4>```
 
-where `<video_file.mp4>` is the path to the vidoe
+where `<video_file.mp4>` is the path to the video
 
 To analyze a set of game clips, run the following command:
 
